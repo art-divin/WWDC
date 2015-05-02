@@ -18,6 +18,9 @@
 		DD2016751AE411C800DD8155 /* VideoWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2016731AE411C800DD8155 /* VideoWindowController.swift */; };
 		DD2016761AE411C800DD8155 /* VideoWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = DD2016741AE411C800DD8155 /* VideoWindowController.xib */; };
 		DD2016781AE4141900DD8155 /* ArrayExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2016771AE4141900DD8155 /* ArrayExtensions.swift */; };
+		DD2CC38C1AF4161700FC5F68 /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2CC38B1AF4161700FC5F68 /* Preferences.swift */; };
+		DD2CC38F1AF419F500FC5F68 /* PreferencesWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2CC38D1AF419F500FC5F68 /* PreferencesWindowController.swift */; };
+		DD2CC3901AF419F500FC5F68 /* PreferencesWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = DD2CC38E1AF419F500FC5F68 /* PreferencesWindowController.xib */; };
 		DD3081781AF3DC370009D412 /* DTFolderMonitor.m in Sources */ = {isa = PBXBuildFile; fileRef = DD3081771AF3DC370009D412 /* DTFolderMonitor.m */; };
 		DD373A8A1AE871AB00DAC19B /* VideoStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD373A891AE871AB00DAC19B /* VideoStore.swift */; };
 		DD4F6E521AE2D11D0099BEB5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD4F6E511AE2D11D0099BEB5 /* AppDelegate.swift */; };
@@ -32,6 +35,8 @@
 		DD4F6E791AE2D98F0099BEB5 /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD4F6E781AE2D98F0099BEB5 /* HeaderView.swift */; };
 		DD7F6F911AE97C99007A4E5E /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD7F6F901AE97C99007A4E5E /* WebKit.framework */; };
 		DD829F221AF271DF00B5977B /* index.json in Resources */ = {isa = PBXBuildFile; fileRef = DD829F211AF271DF00B5977B /* index.json */; };
+		DD89EA0C1AF48A4C0073B845 /* Updater.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD89EA0B1AF48A300073B845 /* Updater.framework */; };
+		DD89EA0D1AF48A4C0073B845 /* Updater.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = DD89EA0B1AF48A300073B845 /* Updater.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		DD92EAA61AE978EC00D503AE /* ASCIIwwdc.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD92EAA41AE978DC00D503AE /* ASCIIwwdc.framework */; };
 		DD92EAA71AE978EC00D503AE /* ASCIIwwdc.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = DD92EAA41AE978DC00D503AE /* ASCIIwwdc.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		DD92EAAC1AE9795900D503AE /* TranscriptWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD92EAAA1AE9795900D503AE /* TranscriptWindowController.swift */; };
@@ -65,6 +70,20 @@
 			remoteGlobalIDString = DD2016401AE401B500DD8155;
 			remoteInfo = ViewUtils;
 		};
+		DD89EA0A1AF48A300073B845 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DD89EA061AF48A300073B845 /* Updater.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DD89E9B91AF4255F0073B845;
+			remoteInfo = Updater;
+		};
+		DD89EA0E1AF48A4C0073B845 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DD89EA061AF48A300073B845 /* Updater.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = DD89E9B81AF4255F0073B845;
+			remoteInfo = Updater;
+		};
 		DD92EAA31AE978DC00D503AE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = DD92EA9F1AE978DC00D503AE /* ASCIIwwdc.xcodeproj */;
@@ -90,6 +109,7 @@
 			files = (
 				DD2016691AE402B400DD8155 /* ViewUtils.framework in Embed Frameworks */,
 				DD92EAA71AE978EC00D503AE /* ASCIIwwdc.framework in Embed Frameworks */,
+				DD89EA0D1AF48A4C0073B845 /* Updater.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -109,6 +129,9 @@
 		DD2016731AE411C800DD8155 /* VideoWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoWindowController.swift; sourceTree = "<group>"; };
 		DD2016741AE411C800DD8155 /* VideoWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = VideoWindowController.xib; sourceTree = "<group>"; };
 		DD2016771AE4141900DD8155 /* ArrayExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArrayExtensions.swift; sourceTree = "<group>"; };
+		DD2CC38B1AF4161700FC5F68 /* Preferences.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Preferences.swift; sourceTree = "<group>"; };
+		DD2CC38D1AF419F500FC5F68 /* PreferencesWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferencesWindowController.swift; sourceTree = "<group>"; };
+		DD2CC38E1AF419F500FC5F68 /* PreferencesWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PreferencesWindowController.xib; sourceTree = "<group>"; };
 		DD3081761AF3DC370009D412 /* DTFolderMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTFolderMonitor.h; sourceTree = "<group>"; };
 		DD3081771AF3DC370009D412 /* DTFolderMonitor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTFolderMonitor.m; sourceTree = "<group>"; };
 		DD373A891AE871AB00DAC19B /* VideoStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoStore.swift; sourceTree = "<group>"; };
@@ -127,6 +150,7 @@
 		DD7F6F901AE97C99007A4E5E /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		DD829F1B1AF26D3C00B5977B /* Crashlytics.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = Crashlytics.sh; sourceTree = "<group>"; };
 		DD829F211AF271DF00B5977B /* index.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = index.json; sourceTree = "<group>"; };
+		DD89EA061AF48A300073B845 /* Updater.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Updater.xcodeproj; path = Updater/Updater.xcodeproj; sourceTree = "<group>"; };
 		DD92EA9F1AE978DC00D503AE /* ASCIIwwdc.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ASCIIwwdc.xcodeproj; path = ASCIIwwdc/ASCIIwwdc.xcodeproj; sourceTree = "<group>"; };
 		DD92EAAA1AE9795900D503AE /* TranscriptWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TranscriptWindowController.swift; sourceTree = "<group>"; };
 		DD92EAAB1AE9795900D503AE /* TranscriptWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TranscriptWindowController.xib; sourceTree = "<group>"; };
@@ -150,6 +174,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DD89EA0C1AF48A4C0073B845 /* Updater.framework in Frameworks */,
 				DD7F6F911AE97C99007A4E5E /* WebKit.framework in Frameworks */,
 				DD2016681AE402B400DD8155 /* ViewUtils.framework in Frameworks */,
 				DDCC5D721AF1518A00F24F55 /* Crashlytics.framework in Frameworks */,
@@ -171,6 +196,7 @@
 		DD4F6E431AE2D11D0099BEB5 = {
 			isa = PBXGroup;
 			children = (
+				DD89EA061AF48A300073B845 /* Updater.xcodeproj */,
 				DDCC5D711AF1518A00F24F55 /* Crashlytics.framework */,
 				DD7F6F901AE97C99007A4E5E /* WebKit.framework */,
 				DD92EA9F1AE978DC00D503AE /* ASCIIwwdc.xcodeproj */,
@@ -223,6 +249,14 @@
 			name = Service;
 			sourceTree = "<group>";
 		};
+		DD89EA071AF48A300073B845 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				DD89EA0B1AF48A300073B845 /* Updater.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		DD92EAA01AE978DC00D503AE /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -263,6 +297,7 @@
 				DDC049CE1AE564F20008D41A /* PDFWindowController.swift */,
 				DD92EAAA1AE9795900D503AE /* TranscriptWindowController.swift */,
 				C913E99B1AED21FB00EBC693 /* DownloadListWindowController.swift */,
+				DD2CC38D1AF419F500FC5F68 /* PreferencesWindowController.swift */,
 			);
 			name = "Main Controllers";
 			sourceTree = "<group>";
@@ -281,6 +316,7 @@
 		DDD7A4301AE2DEFD000A0102 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				DD2CC38E1AF419F500FC5F68 /* PreferencesWindowController.xib */,
 				DD92EAAB1AE9795900D503AE /* TranscriptWindowController.xib */,
 				DDC049CF1AE564F20008D41A /* PDFWindowController.xib */,
 				DD2016741AE411C800DD8155 /* VideoWindowController.xib */,
@@ -308,6 +344,7 @@
 				DD373A891AE871AB00DAC19B /* VideoStore.swift */,
 				DDD7A4371AE2E265000A0102 /* Session.swift */,
 				DDD7A4391AE2E305000A0102 /* DataStore.swift */,
+				DD2CC38B1AF4161700FC5F68 /* Preferences.swift */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -342,6 +379,7 @@
 			dependencies = (
 				DD20166B1AE402B400DD8155 /* PBXTargetDependency */,
 				DD92EAA91AE978EC00D503AE /* PBXTargetDependency */,
+				DD89EA0F1AF48A4C0073B845 /* PBXTargetDependency */,
 			);
 			name = WWDC;
 			productName = WWDC;
@@ -380,6 +418,10 @@
 					ProjectRef = DD92EA9F1AE978DC00D503AE /* ASCIIwwdc.xcodeproj */;
 				},
 				{
+					ProductGroup = DD89EA071AF48A300073B845 /* Products */;
+					ProjectRef = DD89EA061AF48A300073B845 /* Updater.xcodeproj */;
+				},
+				{
 					ProductGroup = DD2016621AE4029100DD8155 /* Products */;
 					ProjectRef = DD2016611AE4029100DD8155 /* ViewUtils.xcodeproj */;
 				},
@@ -399,6 +441,13 @@
 			remoteRef = DD2016651AE4029100DD8155 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		DD89EA0B1AF48A300073B845 /* Updater.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Updater.framework;
+			remoteRef = DD89EA0A1AF48A300073B845 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		DD92EAA41AE978DC00D503AE /* ASCIIwwdc.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -413,6 +462,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DD2CC3901AF419F500FC5F68 /* PreferencesWindowController.xib in Resources */,
 				C913E99A1AED1D2900EBC693 /* DownloadListWindowController.xib in Resources */,
 				DD4F6E561AE2D11D0099BEB5 /* Images.xcassets in Resources */,
 				DD2016761AE411C800DD8155 /* VideoWindowController.xib in Resources */,
@@ -459,6 +509,7 @@
 				DD92EAAC1AE9795900D503AE /* TranscriptWindowController.swift in Sources */,
 				DDD7A43D1AE2E39A000A0102 /* SwiftyJSON.swift in Sources */,
 				DD2016751AE411C800DD8155 /* VideoWindowController.swift in Sources */,
+				DD2CC38F1AF419F500FC5F68 /* PreferencesWindowController.swift in Sources */,
 				DDCC5D761AF1532600F24F55 /* GRCrashlyticsHelper.m in Sources */,
 				DD4F6E541AE2D11D0099BEB5 /* VideosViewController.swift in Sources */,
 				DDD7A43A1AE2E305000A0102 /* DataStore.swift in Sources */,
@@ -470,6 +521,7 @@
 				DD4F6E6F1AE2D14A0099BEB5 /* MainWindowController.swift in Sources */,
 				DDC049D01AE564F20008D41A /* PDFWindowController.swift in Sources */,
 				DD4F6E791AE2D98F0099BEB5 /* HeaderView.swift in Sources */,
+				DD2CC38C1AF4161700FC5F68 /* Preferences.swift in Sources */,
 				DDD7A4381AE2E265000A0102 /* Session.swift in Sources */,
 				1C967BAA1AE7EB27003662B2 /* NSString+QualifierSearchParser.m in Sources */,
 				DD2016781AE4141900DD8155 /* ArrayExtensions.swift in Sources */,
@@ -485,6 +537,11 @@
 			isa = PBXTargetDependency;
 			name = ViewUtils;
 			targetProxy = DD20166A1AE402B400DD8155 /* PBXContainerItemProxy */;
+		};
+		DD89EA0F1AF48A4C0073B845 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Updater;
+			targetProxy = DD89EA0E1AF48A4C0073B845 /* PBXContainerItemProxy */;
 		};
 		DD92EAA91AE978EC00D503AE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
