@@ -14,11 +14,27 @@ class PreferencesWindowController: NSWindowController {
         self.init(windowNibName: "PreferencesWindowController")
     }
     
+    let prefs = Preferences.SharedPreferences()
+    
     override func windowDidLoad() {
         super.windowDidLoad()
-
-        downloadsFolderLabel.stringValue = Preferences.SharedPreferences().localVideoStoragePath
+        
+        populateFontsPopup()
+        
+        downloadsFolderLabel.stringValue = prefs.localVideoStoragePath
+        
+        if let familyName = prefs.transcriptFont.familyName {
+            fontPopUp.selectItemWithTitle(familyName)
+        }
+        
+        let size = "\(Int(prefs.transcriptFont.pointSize))"
+        sizePopUp.selectItemWithTitle(size)
+        
+        textColorWell.color = prefs.transcriptTextColor
+        bgColorWell.color = prefs.transcriptBgColor
     }
+    
+    // MARK: Downloads folder
     
     @IBOutlet weak var downloadsFolderLabel: NSTextField!
     
@@ -43,5 +59,35 @@ class PreferencesWindowController: NSWindowController {
         let path = Preferences.SharedPreferences().localVideoStoragePath
         let root = path.stringByDeletingLastPathComponent
         NSWorkspace.sharedWorkspace().selectFile(path, inFileViewerRootedAtPath: root)
+    }
+    
+    // MARK: Transcript appearance
+    
+    @IBOutlet weak var fontPopUp: NSPopUpButton!
+    @IBOutlet weak var sizePopUp: NSPopUpButton!
+    @IBOutlet weak var textColorWell: NSColorWell!
+    @IBOutlet weak var bgColorWell: NSColorWell!
+    
+    @IBAction func fontPopUpAction(sender: NSPopUpButton) {
+        if let newFont = NSFont(name: fontPopUp.selectedItem!.title, size: prefs.transcriptFont.pointSize) {
+            prefs.transcriptFont = newFont
+        }
+    }
+    
+    @IBAction func sizePopUpAction(sender: NSPopUpButton) {
+        let size = NSString(string: sizePopUp.selectedItem!.title).doubleValue
+        prefs.transcriptFont = NSFont(name: prefs.transcriptFont.fontName, size: CGFloat(size))!
+    }
+    
+    @IBAction func textColorWellAction(sender: NSColorWell) {
+        prefs.transcriptTextColor = textColorWell.color
+    }
+    
+    @IBAction func bgColorWellAction(sender: NSColorWell) {
+        prefs.transcriptBgColor = bgColorWell.color
+    }
+    
+    func populateFontsPopup() {
+        fontPopUp.addItemsWithTitles(NSFontManager.sharedFontManager().availableFontFamilies)
     }
 }
