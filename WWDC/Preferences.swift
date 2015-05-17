@@ -24,6 +24,7 @@ class Preferences {
     
     // keys for NSUserDefault's dictionary
     private struct Keys {
+        static let mainWindowFrame = "mainWindowFrame"
         static let localVideoStoragePath = "localVideoStoragePath"
         static let lastVideoWindowScale = "lastVideoWindowScale"
         
@@ -31,6 +32,12 @@ class Preferences {
             static let font = "transcript.font"
             static let textColor = "transcript.textColor"
             static let bgColor = "transcript.bgColor"
+        }
+        
+        struct VideosController {
+            static let selectedItem = "VideosController.selectedItem"
+            static let searchTerm = "VideosController.searchTerm"
+            static let dividerPosition = "VideosController.dividerPosition"
         }
     }
     
@@ -43,6 +50,68 @@ class Preferences {
             static let font = NSFont(name: "Avenir Next", size: 16.0)!
             static let textColor = NSColor.blackColor()
             static let bgColor = NSColor.whiteColor()
+        }
+        
+        struct VideosController {
+            static let selectedItem = -1
+            static let searchTerm = ""
+            static let dividerPosition = 260.0
+        }
+    }
+    
+    // the main window's frame
+    var mainWindowFrame: NSRect {
+        set {
+            defaults.setObject(NSStringFromRect(newValue), forKey: Keys.mainWindowFrame)
+        }
+        get {
+            if let rectString = defaults.objectForKey(Keys.mainWindowFrame) as? String {
+                return NSRectFromString(rectString)
+            } else {
+                return NSZeroRect
+            }
+        }
+    }
+    
+    // the selected session on the list
+    var selectedSession: Int {
+        set {
+            defaults.setObject(newValue, forKey: Keys.VideosController.selectedItem)
+        }
+        get {
+            if let item = defaults.objectForKey(Keys.VideosController.selectedItem) as? Int {
+                return item
+            } else {
+                return DefaultValues.VideosController.selectedItem
+            }
+        }
+    }
+    
+    // the splitView's divider position
+    var dividerPosition: CGFloat {
+        set {
+            defaults.setObject(NSNumber(double: Double(newValue)), forKey: Keys.VideosController.dividerPosition)
+        }
+        get {
+            if let width = defaults.objectForKey(Keys.VideosController.dividerPosition) as? NSNumber {
+                return CGFloat(width.doubleValue)
+            } else {
+                return CGFloat(DefaultValues.VideosController.dividerPosition)
+            }
+        }
+    }
+    
+    // the search term
+    var searchTerm: String {
+        set {
+            defaults.setObject(newValue, forKey: Keys.VideosController.searchTerm)
+        }
+        get {
+            if let term = defaults.objectForKey(Keys.VideosController.searchTerm) as? String {
+                return term
+            } else {
+                return DefaultValues.VideosController.searchTerm
+            }
         }
     }
     
