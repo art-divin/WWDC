@@ -54,6 +54,9 @@ class VideosViewController: NSViewController, NSTableViewDelegate, NSTableViewDa
         nc.addObserverForName(SessionProgressDidChangeNotification, object: nil, queue: nil) { _ in
             self.reloadTablePreservingSelection()
         }
+        nc.addObserverForName(SessionFavoriteStatusDidChangeNotification, object: nil, queue: nil) { _ in
+            self.reloadTablePreservingSelection()
+        }
         nc.addObserverForName(VideoStoreNotificationDownloadFinished, object: nil, queue: NSOperationQueue.mainQueue()) { _ in
             self.reloadTablePreservingSelection()
         }
@@ -162,7 +165,9 @@ class VideosViewController: NSViewController, NSTableViewDelegate, NSTableViewDa
         cell.trackField.stringValue = session.track
         cell.platformsField.stringValue = ", ".join(session.focus)
         cell.detailsField.stringValue = "\(session.year) - Session \(session.id)"
-        cell.progressView.progress = DataStore.SharedStore.fetchSessionProgress(session)
+        cell.progressView.progress = session.progress
+        cell.progressView.favorite = session.favorite
+        
         if let url = session.hd_url {
             cell.downloadedImage.hidden = !VideoStore.SharedStore().hasVideo(url)
         }
@@ -172,6 +177,99 @@ class VideosViewController: NSViewController, NSTableViewDelegate, NSTableViewDa
     
     func tableView(tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
         return 40.0
+    }
+    
+    // MARK: Table Menu
+
+    @IBAction func markAsWatchedMenuAction(sender: NSMenuItem) {
+        // if there is only one row selected, change the status of the clicked row instead of using the selection
+        if tableView.selectedRowIndexes.count < 2 {
+            var session = displayedSessions[tableView.clickedRow]
+            session.progress = 100
+        } else {
+            doMassiveSessionPropertyUpdate(.Progress(100))
+        }
+    }
+    
+    @IBAction func markAsUnwatchedMenuAction(sender: NSMenuItem) {
+        // if there is only one row selected, change the status of the clicked row instead of using the selection
+        if tableView.selectedRowIndexes.count < 2 {
+            var session = displayedSessions[tableView.clickedRow]
+            session.progress = 0
+        } else {
+            doMassiveSessionPropertyUpdate(.Progress(0))
+        }
+    }
+    
+    @IBAction func addToFavoritesMenuAction(sender: NSMenuItem) {
+        // if there is only one row selected, change the status of the clicked row instead of using the selection
+        if tableView.selectedRowIndexes.count < 2 {
+            var session = displayedSessions[tableView.clickedRow]
+            session.favorite = true
+        } else {
+            doMassiveSessionPropertyUpdate(.Favorite(true))
+        }
+    }
+    
+    @IBAction func removeFromFavoritesMenuAction(sender: NSMenuItem) {
+        // if there is only one row selected, change the status of the clicked row instead of using the selection
+        if tableView.selectedRowIndexes.count < 2 {
+            var session = displayedSessions[tableView.clickedRow]
+            session.favorite = false
+        } else {
+            doMassiveSessionPropertyUpdate(.Favorite(false))
+        }
+    }
+    
+    private let userInitiatedQ = dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.value), 0)
+    private enum MassiveUpdateProperty {
+        case Progress(Double)
+        case Favorite(Bool)
+    }
+    // changes the property of all selected sessions on a background queue
+    private func doMassiveSessionPropertyUpdate(property: MassiveUpdateProperty) {
+        dispatch_async(userInitiatedQ) {
+            self.tableView.selectedRowIndexes.enumerateIndexesUsingBlock { idx, _ in
+                var session = self.displayedSessions[idx]
+                switch property {
+                case .Progress(let progress):
+                    session.setProgressWithoutSendingNotification(progress)
+                case .Favorite(let favorite):
+                    session.setFavoriteWithoutSendingNotification(favorite)
+                }
+            }
+            dispatch_async(dispatch_get_main_queue()) {
+                self.reloadTablePreservingSelection()
+            }
+        }
+    }
+
+    @IBAction func copyURL(sender: NSMenuItem) {
+        var stringToCopy:String?
+        
+        if tableView.selectedRowIndexes.count < 2 && tableView.clickedRow >= 0 {
+            var session = displayedSessions[tableView.clickedRow]
+            stringToCopy = session.shareURL
+        } else {
+            stringToCopy = ""
+            for idx in tableView.selectedRowIndexes {
+                let session = self.displayedSessions[idx]
+                stringToCopy? += session.shareURL
+                if tableView.selectedRowIndexes.lastIndex != idx {
+                    stringToCopy? += "\n"
+                }
+            }
+        }
+        
+        if let string = stringToCopy {
+            let pb = NSPasteboard.generalPasteboard()
+            pb.clearContents()
+            pb.writeObjects([string])
+        }
+    }
+    
+    @IBAction func copy(sender: NSMenuItem) {
+        copyURL(sender)
     }
     
     // MARK: Navigation
@@ -187,6 +285,10 @@ class VideosViewController: NSViewController, NSTableViewDelegate, NSTableViewDa
     }
     
     func tableViewSelectionDidChange(notification: NSNotification) {
+        if let detailsVC = detailsViewController {
+            detailsVC.selectedCount = tableView.selectedRowIndexes.count
+        }
+        
         if tableView.selectedRow >= 0 {
 
             Preferences.SharedPreferences().selectedSession = tableView.selectedRow
@@ -227,7 +329,7 @@ class VideosViewController: NSViewController, NSTableViewDelegate, NSTableViewDa
             if let term = currentSearchTerm {
                 var term = term
                 if term != "" {
-                    var qualifiers = term.qualifierSearchParser_parseQualifiers(["year", "focus", "track", "downloaded"])
+                    var qualifiers = term.qualifierSearchParser_parseQualifiers(["year", "focus", "track", "downloaded", "description"])
                     indexOfLastSelectedRow = -1
                     return sessions.filter { session in
 
@@ -255,6 +357,14 @@ class VideosViewController: NSViewController, NSTableViewDelegate, NSTableViewDa
                         
                         if let track: String = qualifiers["track"] as? String {
                             if session.track.lowercaseString != track.lowercaseString {
+                                return false
+                            }
+                        }
+                        
+                        if let description: String = qualifiers["description"] as? String {
+                            if let range = session.description.rangeOfString(description, options: .CaseInsensitiveSearch | .DiacriticInsensitiveSearch, range: nil, locale: nil) {
+                                // continue...
+                            } else {
                                 return false
                             }
                         }
