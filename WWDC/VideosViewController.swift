@@ -44,11 +44,13 @@ class VideosViewController: NSViewController, NSTableViewDelegate, NSTableViewDa
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        setupScrollView()
+        setupSearching()
         
+        setupScrollView()
+
         tableView.gridColor = Theme.WWDCTheme.separatorColor
         
-        loadSessions()
+        loadSessions(refresh: false, quiet: false)
         
         let nc = NSNotificationCenter.defaultCenter()
         nc.addObserverForName(SessionProgressDidChangeNotification, object: nil, queue: nil) { _ in
@@ -62,6 +64,9 @@ class VideosViewController: NSViewController, NSTableViewDelegate, NSTableViewDa
         }
         nc.addObserverForName(VideoStoreDownloadedFilesChangedNotification, object: nil, queue: NSOperationQueue.mainQueue()) { _ in
             self.reloadTablePreservingSelection()
+        }
+        nc.addObserverForName(AutomaticRefreshPreferenceChangedNotification, object: nil, queue: NSOperationQueue.mainQueue()) { _ in
+            self.setupAutomaticSessionRefresh()
         }
     }
     
@@ -100,6 +105,9 @@ class VideosViewController: NSViewController, NSTableViewDelegate, NSTableViewDa
     var sessions: [Session]! {
         didSet {
             if sessions != nil {
+                // run transcript indexing service if needed
+                TranscriptStore.SharedStore.runIndexerIfNeeded(sessions)
+                
                 headerController.enable()
                 
                 // restore search from previous launch
@@ -107,6 +115,8 @@ class VideosViewController: NSViewController, NSTableViewDelegate, NSTableViewDa
                     search(savedSearchTerm)
                     indexOfLastSelectedRow = Preferences.SharedPreferences().selectedSession
                 }
+                
+                searchController.sessions = sessions
             }
             
             if savedSearchTerm == "" {
@@ -117,21 +127,50 @@ class VideosViewController: NSViewController, NSTableViewDelegate, NSTableViewDa
 
     // MARK: Session loading
     
-    func loadSessions() {
-        if let window = view.window {
-            GRLoadingView.showInWindow(window)
+    func loadSessions(#refresh: Bool, quiet: Bool) {
+        if !quiet {
+            if let window = view.window {
+                GRLoadingView.showInWindow(window)
+            }
         }
         
-        DataStore.SharedStore.fetchSessions() { success, sessions in
+        let completionHandler: DataStore.fetchSessionsCompletionHandler = { success, sessions in
             dispatch_async(dispatch_get_main_queue()) {
                 self.sessions = sessions
                 
                 self.splitManager?.restoreDividerPosition()
                 self.splitManager?.startSavingDividerPosition()
                 
-                GRLoadingView.dismissAllAfterDelay(0.3)
+                if !quiet {
+                    GRLoadingView.dismissAllAfterDelay(0.3)
+                }
+
+                self.setupAutomaticSessionRefresh()
             }
         }
+        
+        DataStore.SharedStore.fetchSessions(completionHandler, disableCache: refresh)
+    }
+    
+    @IBAction func refresh(sender: AnyObject?) {
+        loadSessions(refresh: true, quiet: false)
+    }
+    
+    var sessionListRefreshTimer: NSTimer?
+    
+    func setupAutomaticSessionRefresh() {
+        if Preferences.SharedPreferences().automaticRefreshEnabled {
+            if sessionListRefreshTimer == nil {
+                sessionListRefreshTimer = NSTimer.scheduledTimerWithTimeInterval(Preferences.SharedPreferences().automaticRefreshInterval, target: self, selector: "sessionListRefreshFromTimer", userInfo: nil, repeats: true)
+            }
+        } else {
+            sessionListRefreshTimer?.invalidate()
+            sessionListRefreshTimer = nil
+        }
+    }
+    
+    func sessionListRefreshFromTimer() {
+        loadSessions(refresh: true, quiet: true)
     }
     
     // MARK: TableView
@@ -308,6 +347,16 @@ class VideosViewController: NSViewController, NSTableViewDelegate, NSTableViewDa
     
     // MARK: Search
     
+    var searchController = SearchController()
+    
+    private func setupSearching() {
+        searchController.searchDidFinishCallback = {
+            dispatch_async(dispatch_get_main_queue()) {
+                self.reloadTablePreservingSelection()
+            }
+        }
+    }
+    
     var currentSearchTerm: String? {
         didSet {
             if currentSearchTerm != nil {
@@ -315,86 +364,18 @@ class VideosViewController: NSViewController, NSTableViewDelegate, NSTableViewDa
             } else {
                 Preferences.SharedPreferences().searchTerm = ""
             }
-            
-            reloadTablePreservingSelection()
         }
     }
     
     func search(term: String) {
         currentSearchTerm = term
+        
+        searchController.searchFor(currentSearchTerm)
     }
     
     var displayedSessions: [Session]! {
         get {
-            if let term = currentSearchTerm {
-                var term = term
-                if term != "" {
-                    var qualifiers = term.qualifierSearchParser_parseQualifiers(["year", "focus", "track", "downloaded", "description"])
-                    indexOfLastSelectedRow = -1
-                    return sessions.filter { session in
-
-                        if let year: String = qualifiers["year"] as? String {
-							let yearStr = "\(session.year)"
-							let result = (yearStr as NSString).rangeOfString(year, options: .CaseInsensitiveSearch)
-							if result.location + result.length == count(yearStr) {
-								return true
-							}
-							return false
-                        }
-                        
-                        if let focus: String = qualifiers["focus"] as? String {
-                            var fixedFocus: String = focus
-                            if focus.lowercaseString == "osx" || focus.lowercaseString == "os x" {
-                                fixedFocus = "OS X"
-                            } else if focus.lowercaseString == "ios" {
-                                fixedFocus = "iOS"
-                            }
-                            
-                            if !contains(session.focus, fixedFocus) {
-                                return false
-                            }
-                        }
-                        
-                        if let track: String = qualifiers["track"] as? String {
-                            if session.track.lowercaseString != track.lowercaseString {
-                                return false
-                            }
-                        }
-                        
-                        if let description: String = qualifiers["description"] as? String {
-                            if let range = session.description.rangeOfString(description, options: .CaseInsensitiveSearch | .DiacriticInsensitiveSearch, range: nil, locale: nil) {
-                                // continue...
-                            } else {
-                                return false
-                            }
-                        }
-                        
-                        if let downloaded: String = qualifiers["downloaded"] as? String {
-                            if let url = session.hd_url {
-                                return (VideoStore.SharedStore().hasVideo(url) == downloaded.boolValue)
-                            } else {
-                                return false
-                            }
-                        }
-                        
-                        if let query: String = qualifiers["_query"] as? String {
-                            if query != "" {
-                                if let range = session.title.rangeOfString(query, options: .CaseInsensitiveSearch | .DiacriticInsensitiveSearch, range: nil, locale: nil) {
-                                    //Nothing here...
-                                } else {
-                                    return false
-                                }
-                            }
-                        }
-                        
-                        return true
-                    }
-                } else {
-                    return sessions
-                }
-            } else {
-                return sessions
-            }
+            return searchController.displayedSessions
         }
     }
     
